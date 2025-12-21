@@ -1,12 +1,12 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import type { User } from "@supabase/supabase-js";
 
-export default function AuthPage() {
+function AuthForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const initialMode = searchParams.get("mode") || "signup"; // Default to signup
@@ -460,6 +460,26 @@ export default function AuthPage() {
         </div>
       </main>
     </div>
+  );
+}
+
+export default function AuthPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="flex h-screen items-center justify-center bg-linear-to-br from-neutral-950 via-zinc-900 to-neutral-800">
+          <div className="text-center">
+            <div className="relative mx-auto mb-4 h-16 w-16">
+              <div className="absolute inset-0 rounded-full border-4 border-white/10" />
+              <div className="absolute inset-0 animate-spin rounded-full border-4 border-transparent border-t-emerald-400" />
+            </div>
+            <p className="text-lg font-semibold text-zinc-300">Loading...</p>
+          </div>
+        </div>
+      }
+    >
+      <AuthForm />
+    </Suspense>
   );
 }
 
