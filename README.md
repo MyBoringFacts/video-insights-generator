@@ -349,4 +349,4 @@ This project is open source and available for personal and educational use.
 
 This is a personal portfolio project built for learning purposes. It is not a commercial product, and no guarantees are made about its reliability or suitability for production use. Use at your own discretion.
 
-For questions or issues, please refer to the troubleshooting section or review the detailed documentation files included in the project.
+For questions or issues, please refer to the troubleshooting section or review the detailed documentation files included in the project. Also, yes , I vibe-coded the UI .
