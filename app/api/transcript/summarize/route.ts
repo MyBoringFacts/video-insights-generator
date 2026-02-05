@@ -16,24 +16,16 @@ import {
 
 export async function POST(request: NextRequest) {
   try {
-    // Check authentication first
+    // Authentication is optional - allow guest mode
     const supabase = await createClient();
     const {
       data: { user },
       error: userError,
     } = await supabase.auth.getUser();
 
-    if (userError || !user) {
-      return createErrorResponse(
-        new Error("Authentication required"),
-        "You must be signed in to use this service.",
-        { status: 401, context: "/api/transcript/summarize" },
-      );
-    }
-
-    // Check rate limit
+    // Check rate limit (works for both authenticated and guest users)
     const ipAddress = getIpAddress(request);
-    const identifier = getClientIdentifier(user.id, ipAddress);
+    const identifier = getClientIdentifier(user?.id || null, ipAddress);
     const rateLimitResult = checkRateLimit(
       identifier,
       RATE_LIMITS.transcriptSummarize

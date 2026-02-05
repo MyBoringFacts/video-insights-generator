@@ -12,24 +12,16 @@ import {
 
 export async function POST(request: NextRequest) {
   try {
-    // Check authentication first
+    // Authentication is optional - allow guest mode
     const supabase = await createClient();
     const {
       data: { user },
       error: userError,
     } = await supabase.auth.getUser();
 
-    if (userError || !user) {
-      return createErrorResponse(
-        new Error("Authentication required"),
-        "You must be signed in to use this service.",
-        { status: 401, context: "/api/video/analyze" },
-      );
-    }
-
-    // Check rate limit
+    // Check rate limit (works for both authenticated and guest users)
     const ipAddress = getIpAddress(request);
-    const identifier = getClientIdentifier(user.id, ipAddress);
+    const identifier = getClientIdentifier(user?.id || null, ipAddress);
     const rateLimitResult = checkRateLimit(identifier, RATE_LIMITS.videoAnalyze);
 
     if (!rateLimitResult.success) {
@@ -74,29 +66,31 @@ export async function POST(request: NextRequest) {
 
     const result = await analyzeVideo(videoSource, includeSummary, apiKey);
 
-    // Save to history (user is already authenticated at this point)
+    // Save to history only if user is authenticated (skip for guest mode)
     let savedVideoId: string | null = null;
-    try {
-      const { data: savedVideo, error: insertError } = await supabase
-        .from("videos")
-        .insert({
-          user_id: user.id,
-          video_source: videoSource,
-          transcript: result.transcript || null,
-          summary: result.summary || null,
-          insights: result.insights || null,
-          action_items: result.actionItems || null,
-        })
-        .select("id")
-        .single();
+    if (user && !userError) {
+      try {
+        const { data: savedVideo, error: insertError } = await supabase
+          .from("videos")
+          .insert({
+            user_id: user.id,
+            video_source: videoSource,
+            transcript: result.transcript || null,
+            summary: result.summary || null,
+            insights: result.insights || null,
+            action_items: result.actionItems || null,
+          })
+          .select("id")
+          .single();
 
-      if (!insertError && savedVideo) {
-        savedVideoId = savedVideo.id;
+        if (!insertError && savedVideo) {
+          savedVideoId = savedVideo.id;
+        }
+      } catch (historyError) {
+        // Don't fail the request if history save fails
+        // eslint-disable-next-line no-console
+        console.error("Failed to save video to history:", historyError);
       }
-    } catch (historyError) {
-      // Don't fail the request if history save fails
-      // eslint-disable-next-line no-console
-      console.error("Failed to save video to history:", historyError);
     }
 
     const response = new NextResponse(

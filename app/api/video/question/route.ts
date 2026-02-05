@@ -15,24 +15,16 @@ import {
 
 export async function POST(request: NextRequest) {
   try {
-    // Check authentication first
+    // Authentication is optional - allow guest mode
     const supabase = await createClient();
     const {
       data: { user },
       error: userError,
     } = await supabase.auth.getUser();
 
-    if (userError || !user) {
-      return createErrorResponse(
-        new Error("Authentication required"),
-        "You must be signed in to use this service.",
-        { status: 401, context: "/api/video/question" },
-      );
-    }
-
-    // Check rate limit
+    // Check rate limit (works for both authenticated and guest users)
     const ipAddress = getIpAddress(request);
-    const identifier = getClientIdentifier(user.id, ipAddress);
+    const identifier = getClientIdentifier(user?.id || null, ipAddress);
     const rateLimitResult = checkRateLimit(
       identifier,
       RATE_LIMITS.videoQuestion
@@ -99,19 +91,21 @@ export async function POST(request: NextRequest) {
       answer = await answerQuestion(videoSource, question, apiKey);
     }
 
-    // Save to history (user is already authenticated at this point)
-    try {
-      await supabase.from("questions").insert({
-        user_id: user.id,
-        video_id: videoId || null,
-        question,
-        answer,
-        video_source: videoSource || null,
-      });
-    } catch (historyError) {
-      // Don't fail the request if history save fails
-      // eslint-disable-next-line no-console
-      console.error("Failed to save question to history:", historyError);
+    // Save to history only if user is authenticated (skip for guest mode)
+    if (user && !userError) {
+      try {
+        await supabase.from("questions").insert({
+          user_id: user.id,
+          video_id: videoId || null,
+          question,
+          answer,
+          video_source: videoSource || null,
+        });
+      } catch (historyError) {
+        // Don't fail the request if history save fails
+        // eslint-disable-next-line no-console
+        console.error("Failed to save question to history:", historyError);
+      }
     }
 
     const response = new NextResponse(JSON.stringify({ answer }), {

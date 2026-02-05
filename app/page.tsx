@@ -55,6 +55,12 @@ export default function Home() {
 
           <div className="flex items-center gap-3">
             <Link
+              href="/app"
+              className="px-5 py-2 text-sm font-medium text-amber-300 hover:text-amber-200 transition-all duration-200 rounded-lg border border-amber-400/30 bg-amber-500/10 hover:bg-amber-500/20"
+            >
+              Try as Guest
+            </Link>
+            <Link
               href="/auth?mode=signin"
               className="px-5 py-2 text-sm font-medium text-zinc-300 hover:text-zinc-50 transition-all duration-200 rounded-lg hover:bg-white/5"
             >
@@ -110,6 +116,15 @@ export default function Home() {
             {/* CTA Buttons with Glassmorphism */}
             <div className="flex flex-col items-center justify-center gap-4 sm:flex-row sm:gap-4">
               <Link
+                href="/app"
+                className="group relative inline-flex items-center justify-center gap-2 overflow-hidden rounded-xl border border-amber-400/30 bg-amber-500/10 px-8 py-4 text-base font-semibold text-amber-300 shadow-[0_8px_32px_0_rgba(245,158,11,0.2)] ring-1 ring-amber-400/20 transition-all duration-300 hover:scale-105 hover:bg-amber-500/20 hover:shadow-[0_12px_40px_0_rgba(245,158,11,0.3)]"
+              >
+                <span className="relative z-10">Try as Guest</span>
+                <svg className="relative z-10 h-5 w-5 transition-transform duration-300 group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                </svg>
+              </Link>
+              <Link
                 href="/auth?mode=signup"
                 className="group relative inline-flex items-center justify-center gap-2 overflow-hidden rounded-xl bg-gradient-to-r from-emerald-500 to-emerald-600 px-8 py-4 text-base font-semibold text-white shadow-[0_8px_32px_0_rgba(16,185,129,0.4)] ring-1 ring-emerald-400/30 transition-all duration-300 hover:scale-105 hover:shadow-[0_12px_40px_0_rgba(16,185,129,0.5)]"
               >
@@ -135,9 +150,9 @@ export default function Home() {
             {/* Trust Indicators with Glassmorphism */}
             <div className="mt-12 flex flex-wrap items-center justify-center gap-4">
               {[
-                { icon: "✓", text: "No credit card required" },
+                { icon: "✓", text: "No sign up required" },
                 { icon: "⚡", text: "Results in seconds" },
-                { icon: "🔒", text: "Enterprise-grade security" },
+                { icon: "🔒", text: "Bring your own API key" },
               ].map((item, idx) => (
                 <div
                   key={idx}
@@ -369,18 +384,29 @@ export default function Home() {
               <p className="mb-8 text-lg text-zinc-400">
                 Start extracting insights from your videos in seconds.
                 <br className="hidden sm:block" />
-                <span className="text-zinc-300">No credit card required.</span>
+                <span className="text-zinc-300">No sign up required. Use guest mode or create an account.</span>
               </p>
-              <Link
-                href="/auth?mode=signup"
-                className="group relative inline-flex items-center justify-center gap-2 overflow-hidden rounded-xl bg-gradient-to-r from-emerald-500 to-emerald-600 px-8 py-4 text-base font-semibold text-white shadow-[0_8px_32px_0_rgba(16,185,129,0.4)] ring-1 ring-emerald-400/30 transition-all duration-300 hover:scale-105 hover:shadow-[0_12px_40px_0_rgba(16,185,129,0.5)]"
-              >
-                <span className="relative z-10">Get Started Free</span>
-                <svg className="relative z-10 h-5 w-5 transition-transform duration-300 group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
-                </svg>
-                <div className="absolute inset-0 bg-gradient-to-r from-emerald-400/20 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
-              </Link>
+              <div className="flex flex-col items-center justify-center gap-4 sm:flex-row sm:gap-4">
+                <Link
+                  href="/app"
+                  className="group relative inline-flex items-center justify-center gap-2 overflow-hidden rounded-xl border border-amber-400/30 bg-amber-500/10 px-8 py-4 text-base font-semibold text-amber-300 shadow-[0_8px_32px_0_rgba(245,158,11,0.2)] ring-1 ring-amber-400/20 transition-all duration-300 hover:scale-105 hover:bg-amber-500/20 hover:shadow-[0_12px_40px_0_rgba(245,158,11,0.3)]"
+                >
+                  <span className="relative z-10">Try as Guest</span>
+                  <svg className="relative z-10 h-5 w-5 transition-transform duration-300 group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                  </svg>
+                </Link>
+                <Link
+                  href="/auth?mode=signup"
+                  className="group relative inline-flex items-center justify-center gap-2 overflow-hidden rounded-xl bg-gradient-to-r from-emerald-500 to-emerald-600 px-8 py-4 text-base font-semibold text-white shadow-[0_8px_32px_0_rgba(16,185,129,0.4)] ring-1 ring-emerald-400/30 transition-all duration-300 hover:scale-105 hover:shadow-[0_12px_40px_0_rgba(16,185,129,0.5)]"
+                >
+                  <span className="relative z-10">Create Account</span>
+                  <svg className="relative z-10 h-5 w-5 transition-transform duration-300 group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                  </svg>
+                  <div className="absolute inset-0 bg-gradient-to-r from-emerald-400/20 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+                </Link>
+              </div>
             </div>
           </div>
         </div>

@@ -613,6 +613,7 @@ export default function AppWorkspace() {
       setAnalysis(data);
 
       // Reload history and select the new video if user is authenticated
+      // In guest mode, we don't save to history, so skip this
       if (user) {
         await loadHistory();
         // If we got a videoId from the API, use it; otherwise find by source
@@ -641,6 +642,10 @@ export default function AppWorkspace() {
             }
           }
         }
+      } else {
+        // Guest mode: clear any previous video selection
+        setCurrentVideoId(null);
+        setSelectedVideo(null);
       }
     } catch (err) {
       setAnalysis(null);
@@ -731,7 +736,8 @@ export default function AppWorkspace() {
 
       setChatMessages((prev) => [...prev, assistantMessage]);
 
-      // Reload questions for current video
+      // Reload questions for current video (only if authenticated)
+      // In guest mode, questions are only stored in chatMessages state
       if (user && currentVideoId) {
         await loadQuestionsForVideo(currentVideoId);
       }
@@ -797,130 +803,7 @@ export default function AppWorkspace() {
     );
   }
 
-  // Show authentication required screen if user is not authenticated
-  if (!user) {
-    return (
-      <div className="flex h-screen flex-col overflow-hidden bg-linear-to-br from-neutral-950 via-zinc-900 to-neutral-800 text-zinc-50" style={{ position: 'relative' }}>
-        {/* Header */}
-        <header className="flex shrink-0 items-center justify-between border-b border-white/10 bg-black/20 px-6 py-4 backdrop-blur-sm lg:px-10">
-          <div className="flex items-center gap-4">
-            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white/5 ring-1 ring-white/10 backdrop-blur-md">
-              <span className="text-base font-semibold tracking-tight text-zinc-50">
-                VI
-              </span>
-            </div>
-            <div className="flex flex-col">
-              <span className="text-base font-medium tracking-[0.14em] text-zinc-400">
-                VIDEO INSIGHTS
-              </span>
-              <span className="text-sm text-zinc-500">Premium Intelligence</span>
-            </div>
-          </div>
-          <AuthButton />
-        </header>
-
-        {/* Authentication Required Content */}
-        <main className="flex flex-1 items-center justify-center px-6 py-12">
-          <div className="mx-auto max-w-2xl text-center">
-            <div className="mb-8 inline-flex h-20 w-20 items-center justify-center rounded-full bg-linear-to-br from-emerald-500/20 to-sky-500/20 border border-white/10">
-              <svg
-                className="h-10 w-10 text-emerald-400"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
-                />
-              </svg>
-            </div>
-
-            <h1 className="mb-4 text-4xl font-extrabold text-zinc-50 sm:text-5xl">
-              Authentication Required
-            </h1>
-            <p className="mb-8 text-xl font-light leading-relaxed text-zinc-300">
-              You need to sign in to use Video Insights Generator.
-              <br />
-              Create a free account to start analyzing videos and saving your history.
-            </p>
-
-            <div className="mb-8 rounded-2xl border border-white/10 bg-white/5 p-6 backdrop-blur-xl">
-              <h2 className="mb-4 text-lg font-semibold text-zinc-50">
-                What you'll get:
-              </h2>
-              <ul className="space-y-3 text-left text-zinc-300">
-                <li className="flex items-start gap-3">
-                  <svg
-                    className="mt-0.5 h-5 w-5 shrink-0 text-emerald-400"
-                    fill="currentColor"
-                    viewBox="0 0 20 20"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
-                  <span>Save and access your video analysis history</span>
-                </li>
-                <li className="flex items-start gap-3">
-                  <svg
-                    className="mt-0.5 h-5 w-5 shrink-0 text-emerald-400"
-                    fill="currentColor"
-                    viewBox="0 0 20 20"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
-                  <span>Track all your Q&A conversations</span>
-                </li>
-                <li className="flex items-start gap-3">
-                  <svg
-                    className="mt-0.5 h-5 w-5 shrink-0 text-emerald-400"
-                    fill="currentColor"
-                    viewBox="0 0 20 20"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
-                  <span>Switch between multiple videos easily</span>
-                </li>
-                <li className="flex items-start gap-3">
-                  <svg
-                    className="mt-0.5 h-5 w-5 shrink-0 text-emerald-400"
-                    fill="currentColor"
-                    viewBox="0 0 20 20"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
-                  <span>Secure, private data storage</span>
-                </li>
-              </ul>
-            </div>
-
-            <div className="flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
-              <p className="text-sm text-zinc-400">
-                Click the "Sign In" button in the header to get started
-              </p>
-            </div>
-          </div>
-        </main>
-      </div>
-    );
-  }
+  // Guest mode is now allowed - no authentication required screen
 
   return (
     <div className="flex h-screen flex-col overflow-hidden bg-linear-to-br from-neutral-950 via-zinc-900 to-neutral-800 text-zinc-50">
@@ -1090,16 +973,30 @@ export default function AppWorkspace() {
               VIDEO INSIGHTS
             </span>
             <span className="text-sm text-zinc-500">
-              Workspace for{" "}
-              <span className="font-semibold text-zinc-200">
-                {userID || "guest"}
-              </span>
+              {user ? (
+                <>
+                  Workspace for{" "}
+                  <span className="font-semibold text-zinc-200">
+                    {userID || "guest"}
+                  </span>
+                </>
+              ) : (
+                <>
+                  <span className="font-semibold text-zinc-200">Guest Mode</span>
+                  <span className="ml-2 text-xs text-zinc-500">(No data saved)</span>
+                </>
+              )}
             </span>
           </div>
         </div>
 
         {/* Auth and API Key */}
         <div className="flex items-center gap-3">
+          {!user && (
+            <div className="rounded-xl border border-amber-400/30 bg-amber-500/10 px-3 py-1.5 text-xs font-medium text-amber-300">
+              Guest Mode
+            </div>
+          )}
           <AuthButton />
           {showApiKeyInput ? (
             <div className="flex items-center gap-2">
@@ -1362,6 +1259,7 @@ export default function AppWorkspace() {
                   <p className="max-w-xl text-base text-zinc-300 mt-2">
                     Paste a YouTube URL and get a tailored summary, insights, and action items.
                     {user && " Select a video from the sidebar to view previous analyses."}
+                    {!user && " Sign in to save your analysis history."}
                   </p>
                 </div>
               </div>
